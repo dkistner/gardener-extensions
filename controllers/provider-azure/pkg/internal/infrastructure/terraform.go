@@ -70,10 +70,8 @@ var (
 func ComputeTerraformerChartValues(infra *extensionsv1alpha1.Infrastructure, clientAuth *internal.ClientAuth,
 	config *azurev1alpha1.InfrastructureConfig, cluster *controller.Cluster) (map[string]interface{}, error) {
 	var (
-		createResourceGroup   = true
 		createVNet            = true
 		createAvailabilitySet = false
-		resourceGroupName     = infra.Namespace
 
 		findDomainCountByRegion = func(region string, domainCounts []v1beta1.AzureDomainCount) (v1beta1.AzureDomainCount, error) {
 			for _, domainCount := range domainCounts {
@@ -91,6 +89,10 @@ func ComputeTerraformerChartValues(infra *extensionsv1alpha1.Infrastructure, cli
 		}
 		vnetConfig = map[string]interface{}{
 			"name": infra.Namespace,
+			"subnet": map[string]interface{}{
+				"serviceEndpoints": config.Networks.ServiceEndpoints,
+				"cidr":             config.Networks.Workers,
+			},
 		}
 		outputKeys = map[string]interface{}{
 			"resourceGroupName": TerraformerOutputKeyResourceGroupName,
@@ -100,11 +102,6 @@ func ComputeTerraformerChartValues(infra *extensionsv1alpha1.Infrastructure, cli
 			"securityGroupName": TerraformerOutputKeySecurityGroupName,
 		}
 	)
-	// check if we should use an existing ResourceGroup or create a new one
-	if config.ResourceGroup != nil {
-		createResourceGroup = false
-		resourceGroupName = config.ResourceGroup.Name
-	}
 
 	// VNet settings.
 	if config.Networks.VNet.Name != nil && config.Networks.VNet.ResourceGroup != nil {
@@ -162,22 +159,12 @@ func ComputeTerraformerChartValues(infra *extensionsv1alpha1.Infrastructure, cli
 	return map[string]interface{}{
 		"azure": azure,
 		"create": map[string]interface{}{
-			"resourceGroup":   createResourceGroup,
 			"vnet":            createVNet,
 			"availabilitySet": createAvailabilitySet,
 		},
-		"resourceGroup": map[string]interface{}{
-			"name": resourceGroupName,
-			"vnet": vnetConfig,
-			"subnet": map[string]interface{}{
-				"serviceEndpoints": config.Networks.ServiceEndpoints,
-			},
-		},
 		"clusterName": infra.Namespace,
-		"networks": map[string]interface{}{
-			"worker": config.Networks.Workers,
-		},
-		"outputKeys": outputKeys,
+		"vnet":        vnetConfig,
+		"outputKeys":  outputKeys,
 	}, nil
 }
 

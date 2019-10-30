@@ -35,20 +35,19 @@ An example `InfrastructureConfig` for the Azure extension looks as follows:
 apiVersion: azure.provider.extensions.gardener.cloud/v1alpha1
 kind: InfrastructureConfig
 networks:
-  vnet: # specify either 'name' or 'cidr'
+  vnet: # specify either 'name' and 'resourceGroup' or 'cidr'
   # name: my-vnet
+  # resourceGroup: my-vnet-resource-group
     cidr: 10.250.0.0/16
   workers: 10.250.0.0/19
 # serviceEndpoints:
 # - entry1
   zoned: false
-# resourceGroup:
-#   name: mygroup
 ```
 
 The `networks.vnet` section describes whether you want to create the shoot cluster in an already existing VNet or whether to create a new one:
 
-* If `networks.vnet.name` is given then you have to specify the VNet name of the existing VNet that was created by other means (manually, other tooling, ...).
+* If `networks.vnet.name` and `networks.vnet.resourceGroup` are given then you have to specify the VNet name and resource group name of the existing VNet that was created by other means (manually, other tooling, ...).
 * If `networks.vnet.cidr` is given then you have to specify the VNet CIDR of a new VNet that will be created during shoot creation.
 You can freely choose a private CIDR range.
 * Either `networks.vnet.name` or `networks.vnet.cidr` must be present, but not both at the same time.
@@ -62,9 +61,6 @@ In the `networks.serviceEndpoints[]` list you can specify the list of Azure serv
 Via the `.zoned` boolean you can tell whether you want to use Azure availability zones or not.
 If you don't use zones then an availability set will be created and only basic load balancers will be used.
 Zoned clusters use standard load balancers.
-
-Currently, it's not yet possible to deploy into existing resource groups, but in the future it will.
-The `.resourceGroup.name` field will allow specifying the name of an already existing resource group that the shoot cluster and all infrastructure resources will be deployed to.
 
 Apart from the VNet and the worker subnet the Azure extension will also create a dedicated resource group, route tables, security groups, and an availability set (if not using zoned clusters).
 

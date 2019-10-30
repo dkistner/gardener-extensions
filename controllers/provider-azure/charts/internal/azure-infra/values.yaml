@@ -6,23 +6,18 @@ azure:
   countFaultDomains: 2
 
 create:
-  resourceGroup: true
   vnet: true
   availabilitySet: false
 
-resourceGroup:
-  name: my-resource-group
-  vnet:
-    name: my-vnet
-    # resourceGroup: vnet-resource-group
-    cidr: 10.10.10.10/6
+clusterName: shoot--test--azure
+
+vnet:
+  name: my-vnet
+  # resourceGroup: vnet-resource-group
+  cidr: 10.250.0.0/16
   subnet:
+    cidr: 10.250.0.0/19
     serviceEndpoints: []
-
-clusterName: test-namespace
-
-networks:
-  worker: 10.250.0.0/19
 
 outputKeys:
   resourceGroupName: resourceGroupName

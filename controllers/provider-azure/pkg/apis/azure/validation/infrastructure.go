@@ -42,15 +42,6 @@ func ValidateInfrastructureConfig(infra *apisazure.InfrastructureConfig, resourc
 		services = cidrvalidation.NewCIDR(*servicesCIDR, nil)
 	}
 
-	// Currently, we will not allow deployments into existing resource groups or VNets although this functionality
-	// is already implemented, because the Azure cloud provider is not cleaning up self-created resources properly.
-	// This resources would be orphaned when the cluster will be deleted. We block these cases thereby that the Azure shoot
-	// validation here will fail for those cases.
-	// TODO: remove the following block and uncomment below blocks once deployment into existing resource groups works properly.
-	if infra.ResourceGroup != nil {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("resourceGroup"), infra.ResourceGroup, "specifying an existing resource group is not supported yet"))
-	}
-
 	networksPath := field.NewPath("networks")
 	if len(infra.Networks.Workers) == 0 {
 		allErrs = append(allErrs, field.Required(networksPath.Child("workers"), "must specify the network range for the worker network"))
@@ -96,8 +87,6 @@ func ValidateInfrastructureConfig(infra *apisazure.InfrastructureConfig, resourc
 // ValidateInfrastructureConfigUpdate validates a InfrastructureConfig object.
 func ValidateInfrastructureConfigUpdate(oldConfig, newConfig *apisazure.InfrastructureConfig, nodesCIDR, podsCIDR, servicesCIDR *string) field.ErrorList {
 	allErrs := field.ErrorList{}
-
-	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newConfig.ResourceGroup, oldConfig.ResourceGroup, field.NewPath("resourceGroup"))...)
 	allErrs = append(allErrs, apivalidation.ValidateImmutableField(newConfig.Networks, oldConfig.Networks, field.NewPath("networks"))...)
 
 	return allErrs

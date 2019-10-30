@@ -133,24 +133,18 @@ var _ = Describe("Terraform", func() {
 					"region":         infra.Spec.Region,
 				},
 				"create": map[string]interface{}{
-					"resourceGroup":   true,
 					"vnet":            true,
 					"availabilitySet": false,
 				},
-				"resourceGroup": map[string]interface{}{
+				"vnet": map[string]interface{}{
 					"name": infra.Namespace,
-					"vnet": map[string]interface{}{
-						"name": infra.Namespace,
-						"cidr": config.Networks.Workers,
-					},
+					"cidr": config.Networks.Workers,
 					"subnet": map[string]interface{}{
+						"cidr":             config.Networks.Workers,
 						"serviceEndpoints": []string{testServiceEndpoint},
 					},
 				},
 				"clusterName": infra.Namespace,
-				"networks": map[string]interface{}{
-					"worker": config.Networks.Workers,
-				},
 				"outputKeys": map[string]interface{}{
 					"resourceGroupName": TerraformerOutputKeyResourceGroupName,
 					"vnetName":          TerraformerOutputKeyVNetName,
@@ -176,24 +170,18 @@ var _ = Describe("Terraform", func() {
 					"countFaultDomains":  countFaultDomain,
 				},
 				"create": map[string]interface{}{
-					"resourceGroup":   true,
 					"vnet":            true,
 					"availabilitySet": true,
 				},
-				"resourceGroup": map[string]interface{}{
+				"vnet": map[string]interface{}{
 					"name": infra.Namespace,
-					"vnet": map[string]interface{}{
-						"name": infra.Namespace,
-						"cidr": config.Networks.Workers,
-					},
+					"cidr": config.Networks.Workers,
 					"subnet": map[string]interface{}{
 						"serviceEndpoints": []string{testServiceEndpoint},
+						"cidr":             config.Networks.Workers,
 					},
 				},
 				"clusterName": infra.Namespace,
-				"networks": map[string]interface{}{
-					"worker": config.Networks.Workers,
-				},
 				"outputKeys": map[string]interface{}{
 					"resourceGroupName":   TerraformerOutputKeyResourceGroupName,
 					"vnetName":            TerraformerOutputKeyVNetName,
@@ -225,24 +213,18 @@ var _ = Describe("Terraform", func() {
 					"region":         infra.Spec.Region,
 				},
 				"create": map[string]interface{}{
-					"resourceGroup":   true,
 					"vnet":            false,
 					"availabilitySet": false,
 				},
-				"resourceGroup": map[string]interface{}{
-					"name": infra.Namespace,
-					"vnet": map[string]interface{}{
-						"name":          existingVnetName,
-						"resourceGroup": existingVnetResourceGroup,
-					},
+				"vnet": map[string]interface{}{
+					"name":          existingVnetName,
+					"resourceGroup": existingVnetResourceGroup,
 					"subnet": map[string]interface{}{
 						"serviceEndpoints": []string{testServiceEndpoint},
+						"cidr":             config.Networks.Workers,
 					},
 				},
 				"clusterName": infra.Namespace,
-				"networks": map[string]interface{}{
-					"worker": config.Networks.Workers,
-				},
 				"outputKeys": map[string]interface{}{
 					"resourceGroupName": TerraformerOutputKeyResourceGroupName,
 					"vnetName":          TerraformerOutputKeyVNetName,

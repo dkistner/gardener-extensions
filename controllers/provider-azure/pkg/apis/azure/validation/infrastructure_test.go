@@ -50,17 +50,6 @@ var _ = Describe("InfrastructureConfig validation", func() {
 	})
 
 	Describe("#ValidateInfrastructureConfig", func() {
-		It("should forbid specifying a resource group configuration", func() {
-			infrastructureConfig.ResourceGroup = &apisazure.ResourceGroup{}
-
-			errorList := ValidateInfrastructureConfig(infrastructureConfig, &resourceGroup, &nodes, &pods, &services)
-
-			Expect(errorList).To(ConsistOfFields(Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("resourceGroup"),
-			}))
-		})
-
 		Context("vnet", func() {
 			It("should forbid specifying a vnet name without resource group", func() {
 				vnetName := "existing-vnet"
@@ -227,18 +216,6 @@ var _ = Describe("InfrastructureConfig validation", func() {
 	Describe("#ValidateInfrastructureConfigUpdate", func() {
 		It("should return no errors for an unchanged config", func() {
 			Expect(ValidateInfrastructureConfigUpdate(infrastructureConfig, infrastructureConfig, &nodes, &pods, &services)).To(BeEmpty())
-		})
-
-		It("should forbid changing the resource group section", func() {
-			newInfrastructureConfig := infrastructureConfig.DeepCopy()
-			newInfrastructureConfig.ResourceGroup = &apisazure.ResourceGroup{}
-
-			errorList := ValidateInfrastructureConfigUpdate(infrastructureConfig, newInfrastructureConfig, &nodes, &pods, &services)
-
-			Expect(errorList).To(ConsistOf(PointTo(MatchFields(IgnoreExtras, Fields{
-				"Type":  Equal(field.ErrorTypeInvalid),
-				"Field": Equal("resourceGroup"),
-			}))))
 		})
 
 		It("should forbid changing the network section", func() {

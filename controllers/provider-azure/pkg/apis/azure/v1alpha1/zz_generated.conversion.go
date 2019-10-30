@@ -339,7 +339,6 @@ func Convert_azure_DomainCount_To_v1alpha1_DomainCount(in *azure.DomainCount, ou
 }
 
 func autoConvert_v1alpha1_InfrastructureConfig_To_azure_InfrastructureConfig(in *InfrastructureConfig, out *azure.InfrastructureConfig, s conversion.Scope) error {
-	out.ResourceGroup = (*azure.ResourceGroup)(unsafe.Pointer(in.ResourceGroup))
 	if err := Convert_v1alpha1_NetworkConfig_To_azure_NetworkConfig(&in.Networks, &out.Networks, s); err != nil {
 		return err
 	}
@@ -353,7 +352,6 @@ func Convert_v1alpha1_InfrastructureConfig_To_azure_InfrastructureConfig(in *Inf
 }
 
 func autoConvert_azure_InfrastructureConfig_To_v1alpha1_InfrastructureConfig(in *azure.InfrastructureConfig, out *InfrastructureConfig, s conversion.Scope) error {
-	out.ResourceGroup = (*ResourceGroup)(unsafe.Pointer(in.ResourceGroup))
 	if err := Convert_azure_NetworkConfig_To_v1alpha1_NetworkConfig(&in.Networks, &out.Networks, s); err != nil {
 		return err
 	}

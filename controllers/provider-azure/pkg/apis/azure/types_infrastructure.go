@@ -23,8 +23,6 @@ import (
 // InfrastructureConfig infrastructure configuration resource
 type InfrastructureConfig struct {
 	metav1.TypeMeta
-	// ResourceGroup is azure resource group
-	ResourceGroup *ResourceGroup
 	// Networks is the network configuration (VNets, subnets, etc.)
 	Networks NetworkConfig
 	// Zoned indicates whether the cluster uses zones

@@ -155,11 +155,6 @@ func (in *DomainCount) DeepCopy() *DomainCount {
 func (in *InfrastructureConfig) DeepCopyInto(out *InfrastructureConfig) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	if in.ResourceGroup != nil {
-		in, out := &in.ResourceGroup, &out.ResourceGroup
-		*out = new(ResourceGroup)
-		**out = **in
-	}
 	in.Networks.DeepCopyInto(&out.Networks)
 	return
 }

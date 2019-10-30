@@ -169,20 +169,6 @@ string
 </tr>
 <tr>
 <td>
-<code>resourceGroup</code></br>
-<em>
-<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.ResourceGroup">
-ResourceGroup
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>ResourceGroup is azure resource group.</p>
-</td>
-</tr>
-<tr>
-<td>
 <code>networks</code></br>
 <em>
 <a href="#azure.provider.extensions.gardener.cloud/v1alpha1.NetworkConfig">
@@ -762,7 +748,6 @@ VNetStatus
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.InfrastructureConfig">InfrastructureConfig</a>, 
 <a href="#azure.provider.extensions.gardener.cloud/v1alpha1.InfrastructureStatus">InfrastructureStatus</a>)
 </p>
 <p>

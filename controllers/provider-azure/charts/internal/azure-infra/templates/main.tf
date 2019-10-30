@@ -5,12 +5,10 @@ provider "azurerm" {
   client_secret   = "${var.CLIENT_SECRET}"
 }
 
-{{ if .Values.create.resourceGroup -}}
 resource "azurerm_resource_group" "rg" {
-  name     = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  name     = "{{ required "clusterName is required" .Values.clusterName }}"
   location = "{{ required "azure.region is required" .Values.azure.region }}"
 }
-{{- end}}
 
 #=====================================================================
 #= VNet, Subnets, Route Table, Security Groups
@@ -18,23 +16,23 @@ resource "azurerm_resource_group" "rg" {
 
 {{ if .Values.create.vnet -}}
 resource "azurerm_virtual_network" "vnet" {
-  name                = "{{ required "resourceGroup.vnet.name is required" .Values.resourceGroup.vnet.name }}"
-  resource_group_name = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  name                = "{{ required "vnet.name is required" .Values.vnet.name }}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
   location            = "{{ required "azure.region is required" .Values.azure.region }}"
-  address_space       = ["{{ required "resourceGroup.vnet.cidr is required" .Values.resourceGroup.vnet.cidr }}"]
+  address_space       = ["{{ required "vnet.cidr is required" .Values.vnet.cidr }}"]
 }
 {{- end }}
 
 resource "azurerm_subnet" "workers" {
   name                      = "{{ required "clusterName is required" .Values.clusterName }}-nodes"
   {{ if .Values.create.vnet -}}
-  resource_group_name       = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  resource_group_name       = "${azurerm_resource_group.rg.name}"
   {{ else -}}
-  resource_group_name       = "{{ required "resourceGroup.vnet.resourceGroup is required" .Values.resourceGroup.vnet.resourceGroup }}"
+  resource_group_name       = "{{ required "vnet.resourceGroup is required" .Values.vnet.resourceGroup }}"
   {{ end -}}
-  virtual_network_name      = "{{ required "resourceGroup.vnet.name is required" .Values.resourceGroup.vnet.name }}"
-  address_prefix            = "{{ required "networks.worker is required" .Values.networks.worker }}"
-  service_endpoints         = [{{range $index, $serviceEndpoint := .Values.resourceGroup.subnet.serviceEndpoints}}{{if $index}},{{end}}"{{$serviceEndpoint}}"{{end}}]
+  virtual_network_name      = "{{ required "vnet.name is required" .Values.vnet.name }}"
+  address_prefix            = "{{ required "vnet.subnet.cidr is required" .Values.vnet.subnet.cidr }}"
+  service_endpoints         = [{{range $index, $serviceEndpoint := .Values.vnet.subnet.serviceEndpoints}}{{if $index}},{{end}}"{{$serviceEndpoint}}"{{end}}]
   route_table_id            = "${azurerm_route_table.workers.id}"
   network_security_group_id = "${azurerm_network_security_group.workers.id}"
 }
@@ -42,13 +40,13 @@ resource "azurerm_subnet" "workers" {
 resource "azurerm_route_table" "workers" {
   name                = "worker_route_table"
   location            = "{{ required "azure.region is required" .Values.azure.region }}"
-  resource_group_name = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
 }
 
 resource "azurerm_network_security_group" "workers" {
   name                = "{{ required "clusterName is required" .Values.clusterName }}-workers"
   location            = "{{ required "azure.region is required" .Values.azure.region }}"
-  resource_group_name = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
 }
 
 {{ if .Values.create.availabilitySet -}}
@@ -58,7 +56,7 @@ resource "azurerm_network_security_group" "workers" {
 
 resource "azurerm_availability_set" "workers" {
   name                         = "{{ required "clusterName is required" .Values.clusterName }}-avset-workers"
-  resource_group_name          = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  resource_group_name          = "${azurerm_resource_group.rg.name}"
   location                     = "{{ required "azure.region is required" .Values.azure.region }}"
   platform_update_domain_count = "{{ required "azure.countUpdateDomains is required" .Values.azure.countUpdateDomains }}"
   platform_fault_domain_count  = "{{ required "azure.countFaultDomains is required" .Values.azure.countFaultDomains }}"
@@ -71,16 +69,16 @@ resource "azurerm_availability_set" "workers" {
 //=====================================================================
 
 output "{{ .Values.outputKeys.resourceGroupName }}" {
-  value = "{{ required "resourceGroup.name is required" .Values.resourceGroup.name }}"
+  value = "${azurerm_resource_group.rg.name}"
 }
 
 output "{{ .Values.outputKeys.vnetName }}" {
-  value = "{{ required "resourceGroup.vnet.name is required" .Values.resourceGroup.vnet.name }}"
+  value = "{{ required "vnet.name is required" .Values.vnet.name }}"
 }
 
 {{ if not .Values.create.vnet -}}
 output "{{ .Values.outputKeys.vnetResourceGroup }}" {
-  value = "{{ required "resourceGroup.vnet.resourceGroup is required" .Values.resourceGroup.vnet.resourceGroup }}"
+  value = "{{ required "vnet.resourceGroup is required" .Values.vnet.resourceGroup }}"
 }
 {{- end}}
 
