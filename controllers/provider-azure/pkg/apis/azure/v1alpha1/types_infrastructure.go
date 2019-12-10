@@ -29,6 +29,9 @@ type InfrastructureConfig struct {
 	ResourceGroup *ResourceGroup `json:"resourceGroup,omitempty"`
 	// Networks is the network configuration (VNet, subnets, etc.).
 	Networks NetworkConfig `json:"networks"`
+	// OutboundConnectivity contains configuration to control the outbound connectivity configuration
+	// +optional
+	OutboundConnectivity *OutboundConnectivity `json:"outbound,omitempty"`
 	// Zoned indicates whether the cluster uses availability zones.
 	// +optional
 	Zoned bool `json:"zoned,omitempty"`
@@ -66,6 +69,12 @@ type InfrastructureStatus struct {
 	RouteTables []RouteTable `json:"routeTables"`
 	// SecurityGroups is a list of created security groups
 	SecurityGroups []SecurityGroup `json:"securityGroups"`
+	// LoadBalancer is an Azure LoadBalancer
+	// +optional
+	LoadBalancer *LoadBalancer `json:"loadBalancer,omitempty"`
+	// OutboungIPs is a list of created egress/outbound public ips
+	// +optional
+	OutboundIPs []PublicIP `json:"outboundIPs,omitempty"`
 	// Zoned indicates whether the cluster uses zones
 	// +optional
 	Zoned bool `json:"zoned,omitempty"`
@@ -144,4 +153,21 @@ type VNetStatus struct {
 	// ResourceGroup is the resource group where the existing vNet belongs to.
 	// +optional
 	ResourceGroup *string `json:"resourceGroup,omitempty"`
+}
+
+//OutboundConnectivity contains configuration to control the outbound connectivity configuration.
+type OutboundConnectivity struct {
+	StableEgressIP bool `json:"stableEgressIP"`
+}
+
+// LoadBalancer is the current status of the managed LoadBalancer.
+type LoadBalancer struct {
+	Name string `json:"name"`
+}
+
+// PublicIP contains information about a public ip.
+type PublicIP struct {
+	Name          string  `json:"name"`
+	ResourceGroup *string `json:"resourceGroup,omitempty"`
+	IP            *string `json:"ip,omitempty"`
 }

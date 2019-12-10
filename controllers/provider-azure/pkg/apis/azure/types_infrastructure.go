@@ -27,6 +27,8 @@ type InfrastructureConfig struct {
 	ResourceGroup *ResourceGroup
 	// Networks is the network configuration (VNets, subnets, etc.)
 	Networks NetworkConfig
+	// OutboundConnectivity contains configuration to control the outbound connectivity configuration
+	OutboundConnectivity *OutboundConnectivity
 	// Zoned indicates whether the cluster uses zones
 	Zoned bool
 }
@@ -62,6 +64,10 @@ type InfrastructureStatus struct {
 	RouteTables []RouteTable
 	// SecurityGroups is a list of created security groups
 	SecurityGroups []SecurityGroup
+	// LoadBalancer is an Azure LoadBalancer
+	LoadBalancer *LoadBalancer
+	// OutboungIPs is a list of created egress/outbound public ips
+	OutboundIPs []PublicIP
 	// Zoned indicates whether the cluster uses zones
 	Zoned bool
 }
@@ -134,4 +140,21 @@ type VNetStatus struct {
 	Name string
 	// ResourceGroup is the resource group where the existing vNet belongs to.
 	ResourceGroup *string
+}
+
+//OutboundConnectivity contains configuration to control the outbound connectivity configuration.
+type OutboundConnectivity struct {
+	StableEgressIP bool
+}
+
+// LoadBalancer is the current status of the managed LoadBalancer.
+type LoadBalancer struct {
+	Name string
+}
+
+// PublicIP contains information about a public ip.
+type PublicIP struct {
+	Name          string
+	ResourceGroup *string
+	IP            *string
 }

@@ -14,6 +14,10 @@ primaryAvailabilitySetName: "{{ .Values.availabilitySetName }}"
 loadBalancerSku: "basic"
 {{- else }}
 loadBalancerSku: "standard"
+{{- if and (hasKey .Values "loadBalancerName") (semverCompare ">= 1.16" .Values.kubernetesVersion) }}
+loadBalancerName: "{{ .Values.loadBalancerName }}"
+disableOutboundSNAT: true
+{{- end }}
 {{- end }}
 cloudProviderBackoff: true
 cloudProviderBackoffRetries: 6

@@ -30,6 +30,11 @@ func (a *actuator) Delete(ctx context.Context, infra *extensionsv1alpha1.Infrast
 		return err
 	}
 
+	// Handle the load balancer lifecycle independently.
+	if err := infrastructure.DeleteLoadBalancer(ctx, clientAuth, infra); err != nil {
+		return err
+	}
+
 	tf, err := internal.NewTerraformer(a.restConfig, clientAuth, infrastructure.TerraformerPurpose, infra.Namespace, infra.Name)
 	if err != nil {
 		return err

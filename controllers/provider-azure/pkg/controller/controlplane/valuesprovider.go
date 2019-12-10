@@ -232,6 +232,11 @@ func getConfigChartValues(
 		values["vnetResourceGroup"] = *infraStatus.Networks.VNet.ResourceGroup
 	}
 
+	// TODO This can be only supported with k8s version >= 1.16
+	if infraStatus.Zoned && infraStatus.LoadBalancer != nil && len(infraStatus.OutboundIPs) > 0 {
+		values["loadBalancerName"] = infraStatus.LoadBalancer.Name
+	}
+
 	// Add AvailabilitySet config if the cluster is not zoned.
 	if !infraStatus.Zoned {
 		nodesAvailabilitySet, err := azureapihelper.FindAvailabilitySetByPurpose(infraStatus.AvailabilitySets, apisazure.PurposeNodes)

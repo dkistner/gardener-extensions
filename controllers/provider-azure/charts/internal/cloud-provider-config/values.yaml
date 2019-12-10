@@ -10,3 +10,4 @@ subnetName: sname
 routeTableName: rtname
 securityGroupName: sgname
 region: location
+# loadBalancerName: lbname

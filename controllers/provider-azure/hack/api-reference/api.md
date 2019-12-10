@@ -196,6 +196,20 @@ NetworkConfig
 </tr>
 <tr>
 <td>
+<code>outbound</code></br>
+<em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.OutboundConnectivity">
+OutboundConnectivity
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>OutboundConnectivity contains configuration to control the outbound connectivity configuration</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>zoned</code></br>
 <em>
 bool
@@ -464,6 +478,34 @@ ResourceGroup
 </tr>
 <tr>
 <td>
+<code>loadBalancer</code></br>
+<em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.LoadBalancer">
+LoadBalancer
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>LoadBalancer is an Azure LoadBalancer</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>outboundIPs</code></br>
+<em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.PublicIP">
+[]PublicIP
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>OutboungIPs is a list of created egress/outbound public ips</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>zoned</code></br>
 <em>
 bool
@@ -472,6 +514,35 @@ bool
 <td>
 <em>(Optional)</em>
 <p>Zoned indicates whether the cluster uses zones</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure.provider.extensions.gardener.cloud/v1alpha1.LoadBalancer">LoadBalancer
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.InfrastructureStatus">InfrastructureStatus</a>)
+</p>
+<p>
+<p>LoadBalancer is the current status of the managed LoadBalancer.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
 </td>
 </tr>
 </tbody>
@@ -709,6 +780,84 @@ VNetStatus
 </td>
 <td>
 <p>Subnets are the subnets that have been created.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure.provider.extensions.gardener.cloud/v1alpha1.OutboundConnectivity">OutboundConnectivity
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.InfrastructureConfig">InfrastructureConfig</a>)
+</p>
+<p>
+<p>OutboundConnectivity contains configuration to control the outbound connectivity configuration.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>stableEgressIP</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure.provider.extensions.gardener.cloud/v1alpha1.PublicIP">PublicIP
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#azure.provider.extensions.gardener.cloud/v1alpha1.InfrastructureStatus">InfrastructureStatus</a>)
+</p>
+<p>
+<p>PublicIP contains information about a public ip.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>name</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<code>resourceGroup</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+<code>ip</code></br>
+<em>
+string
+</em>
+</td>
+<td>
 </td>
 </tr>
 </tbody>

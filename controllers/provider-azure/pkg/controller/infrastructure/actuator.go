@@ -18,10 +18,8 @@ import (
 	"context"
 
 	azurev1alpha1 "github.com/gardener/gardener-extensions/controllers/provider-azure/pkg/apis/azure/v1alpha1"
-	infrainternal "github.com/gardener/gardener-extensions/controllers/provider-azure/pkg/internal/infrastructure"
 	extensionscontroller "github.com/gardener/gardener-extensions/pkg/controller"
 	"github.com/gardener/gardener-extensions/pkg/controller/infrastructure"
-	"github.com/gardener/gardener-extensions/pkg/terraformer"
 
 	"github.com/go-logr/logr"
 
@@ -68,17 +66,7 @@ func (a *actuator) InjectConfig(config *rest.Config) error {
 	return nil
 }
 
-func (a *actuator) updateProviderStatus(
-	ctx context.Context,
-	tf terraformer.Terraformer,
-	infra *extensionsv1alpha1.Infrastructure,
-	config *azurev1alpha1.InfrastructureConfig,
-) error {
-	status, err := infrainternal.ComputeStatus(tf, config)
-	if err != nil {
-		return err
-	}
-
+func (a *actuator) updateProviderStatus(ctx context.Context, infra *extensionsv1alpha1.Infrastructure, status *azurev1alpha1.InfrastructureStatus) error {
 	return extensionscontroller.TryUpdateStatus(ctx, retry.DefaultBackoff, a.client, infra, func() error {
 		infra.Status.ProviderStatus = &runtime.RawExtension{Object: status}
 		return nil

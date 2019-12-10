@@ -20,6 +20,7 @@ import (
 
 	"github.com/gardener/gardener-extensions/controllers/provider-azure/pkg/internal"
 	"github.com/gardener/gardener-extensions/controllers/provider-azure/pkg/internal/infrastructure"
+	infrainternal "github.com/gardener/gardener-extensions/controllers/provider-azure/pkg/internal/infrastructure"
 	"github.com/gardener/gardener-extensions/pkg/controller"
 	controllererrors "github.com/gardener/gardener-extensions/pkg/controller/error"
 	"github.com/gardener/gardener-extensions/pkg/terraformer"
@@ -60,5 +61,17 @@ func (a *actuator) Reconcile(ctx context.Context, infra *extensionsv1alpha1.Infr
 		}
 	}
 
-	return a.updateProviderStatus(ctx, tf, infra, config)
+	status, err := infrainternal.ComputeStatus(tf, config)
+	if err != nil {
+		return err
+	}
+
+	// Handle the load balancer lifecycle independently.
+	if config.OutboundConnectivity != nil && config.OutboundConnectivity.StableEgressIP && config.Zoned {
+		if err := infrastructure.EnsureLoadBalancer(ctx, clientAuth, infra, status); err != nil {
+			return err
+		}
+	}
+
+	return a.updateProviderStatus(ctx, infra, status)
 }

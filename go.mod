@@ -6,6 +6,8 @@ require (
 	cloud.google.com/go v0.43.0
 	github.com/Azure/azure-sdk-for-go v32.6.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.7.0
+	github.com/Azure/go-autorest/autorest v0.9.0
+	github.com/Azure/go-autorest/autorest/adal v0.6.0
 	github.com/Azure/go-autorest/autorest/azure/auth v0.3.0
 	github.com/Masterminds/semver v1.4.2
 	github.com/ahmetb/gen-crd-api-reference-docs v0.1.5
