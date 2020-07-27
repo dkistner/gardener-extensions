@@ -47,6 +47,13 @@ type WorkerDelegate interface {
 	// `.status.providerStatus` field of the `Worker` resource such that the controller can look up its provider-specific
 	// machine image information in case the required version has been removed from its componentconfig.
 	GetMachineImages(context.Context) (runtime.Object, error)
+
+	// DeployWorkerPoolArtifacts creates the artifacts of a workerpool.
+	// The list of created artifacts will be stored in `.status.providerStatus` field of the `Worker` resource.
+	DeployWorkerPoolArtifacts(context.Context) (runtime.Object, error)
+	// CleanupWorkerPoolArtifacts will delete the unneeded artifacts of the workerpool.
+	// The list of remaining artifacts will be stored in `.status.providerStatus` field of the `Worker` resource.
+	CleanupWorkerPoolArtifacts(context.Context) (runtime.Object, error)
 }
 
 // DelegateFactory acts upon Worker resources.

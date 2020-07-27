@@ -70,6 +70,11 @@ func (a *genericActuator) Reconcile(ctx context.Context, worker *extensionsv1alp
 		return err
 	}
 
+	// Deploy the workerpool artifacts and store the artifact information in the worker provider status.
+	if err := a.runArtifactOperationAndUpdateStatus(ctx, worker, workerDelegate.DeployWorkerPoolArtifacts); err != nil {
+		return errors.Wrap(err, "failed to deploy workerpool artifacts")
+	}
+
 	// Generate the desired machine deployments.
 	wantedMachineDeployments, err := workerDelegate.GenerateMachineDeployments(ctx)
 	if err != nil {
@@ -199,6 +204,10 @@ func (a *genericActuator) Reconcile(ctx context.Context, worker *extensionsv1alp
 				return err
 			}
 		}
+	}
+
+	if err := a.runArtifactOperationAndUpdateStatus(ctx, worker, workerDelegate.CleanupWorkerPoolArtifacts); err != nil {
+		return errors.Wrap(err, "failed to cleanup workerpool artifacts")
 	}
 
 	if err := a.updateWorkerStatusMachineDeployments(ctx, worker, wantedMachineDeployments); err != nil {

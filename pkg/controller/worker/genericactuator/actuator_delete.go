@@ -95,6 +95,11 @@ func (a *genericActuator) Delete(ctx context.Context, worker *extensionsv1alpha1
 		return gardencorev1beta1helper.DetermineError(err, fmt.Sprintf("Failed while waiting for all machine resources to be deleted: '%s'", err.Error()))
 	}
 
+	// Cleanup workerpool artifacts and store the updated artifact information in the worker provider status.
+	if err := a.runArtifactOperationAndUpdateStatus(ctx, worker, workerDelegate.CleanupWorkerPoolArtifacts); err != nil {
+		return errors.Wrap(err, "failed to cleanup workerpool artifacts")
+	}
+
 	// Delete the machine-controller-manager.
 	if err := a.deleteMachineControllerManager(ctx, worker); err != nil {
 		return errors.Wrapf(err, "failed deleting machine-controller-manager")

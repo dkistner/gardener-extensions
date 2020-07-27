@@ -23,6 +23,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
 	gardenerkubernetes "github.com/gardener/gardener/pkg/client/kubernetes"
 	"github.com/gardener/gardener/pkg/utils/imagevector"
 	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
@@ -35,6 +36,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/util/retry"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 )
@@ -278,4 +280,28 @@ func (a *genericActuator) shallowDeleteAllObjects(ctx context.Context, namespace
 		}
 		return nil
 	})
+}
+
+func (a *genericActuator) runArtifactOperationAndUpdateStatus(ctx context.Context, worker *extensionsv1alpha1.Worker, fn func(context.Context) (runtime.Object, error)) error {
+	artifactStatus, err := fn(ctx)
+
+	if artifactStatus == nil && err == nil {
+		return nil
+	}
+
+	statusUpdateErr := extensionscontroller.TryUpdateStatus(ctx, retry.DefaultBackoff, a.client, worker, func() error {
+		worker.Status.ProviderStatus = &runtime.RawExtension{Object: artifactStatus}
+		return nil
+	})
+
+	if statusUpdateErr != nil && err != nil {
+		return errors.Wrapf(err, statusUpdateErr.Error())
+	}
+	if statusUpdateErr != nil {
+		return statusUpdateErr
+	}
+	if err != nil {
+		return err
+	}
+	return nil
 }
